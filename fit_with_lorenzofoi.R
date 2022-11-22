@@ -148,7 +148,7 @@ initplot <- ggplot(init, aes(pars,med, col=factor(sero)))+ geom_point()+
   theme_minimal()+ geom_linerange(aes(ymin=ciL,ymax=ciU))+ xlab('Pars')+ 
   ylab('Proportion')
 
-# Expected FOI fit
+# check FOI fit
 fitfoi <- data.frame(date=seq(1:data$Nt2),t=seq(1:data$Nt2),obs=NA, med=NA,ciL=NA,ciU=NA)
 for(i in 1:data$Nt2){
   fitfoi[i,4:6] <- quantile(chains$lamtot[,i], c(0.5,0.025,0.975),na.rm = TRUE)
