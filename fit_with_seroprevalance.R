@@ -52,7 +52,7 @@ data$sigma <- 1/4 #infectious period
 data$omega <- 1/6 #IIP
 data$kappa <- 1/6 #EIP
 data$phi <- 1 #ADE factor
-data$St <- 0.28 #expected susceptible proportion at the time samples were collected
+data$foi <- 0.024163*4/365 # Lorenzo's daily total FOI 
 # annual average birth rate for each year of the time-series
 data$br<- c(rep(4.96e-05,35*7),
             rep(4.90e-05,52*7),
@@ -148,6 +148,17 @@ initplot <- ggplot(init, aes(pars,med, col=factor(sero)))+ geom_point()+
   theme_minimal()+ geom_linerange(aes(ymin=ciL,ymax=ciU))+ xlab('Pars')+ 
   ylab('Proportion')
 
+# Expected FOI fit
+fitfoi <- data.frame(date=seq(1:data$Nt2),t=seq(1:data$Nt2),obs=NA, med=NA,ciL=NA,ciU=NA)
+for(i in 1:data$Nt2){
+  fitfoi[i,4:6] <- quantile(chains$lamtot[,i], c(0.5,0.025,0.975),na.rm = TRUE)
+  fitfoi[i,3] <- data$foi
+}
+plotfitfoi <- ggplot(fitfoi,aes(date,med))+ geom_point(col='blue')+
+  geom_line(aes(date,obs),col='black')+theme_minimal()+
+  theme(legend.position='none')+ ylab('FOI')+ xlab('days')+
+  geom_ribbon(aes(ymin=ciL,ymax=ciU),fill='dodgerblue',alpha=0.5)
+plotfitfoi
 
 # plot time-series fit
 fitS <- data.frame(date=as.Date(dates),t=rep(seq(1:data$Nt),4),sero=sort(rep(seq(1,4),data$Nt)),obs=NA, med=NA,ciL=NA,ciU=NA)
@@ -173,7 +184,7 @@ fitPlotTot <- ggplot(fitTot, aes(date,obs))+ geom_point(alpha=0.4, col='grey40')
 fitPlotTot
 
 # Epidemiological parameter estimates
-BtS <- data.frame(date=as.Date(dates),t=rep(seq(1:data$Nt),4),med=NA,ciL=NA,ciU=NA)
+BtS <- data.frame(date=as.Date(dates),t=seq(1:data$Nt),med=NA,ciL=NA,ciU=NA)
 Rt <- data.frame(date=as.Date(dates),t=rep(seq(1:data$Nt),4),sero=sort(rep(seq(1,4),data$Nt)),med=NA,ciL=NA,ciU=NA)
 lam <- data.frame(date=seq(1:data$Nt2),t=rep(seq(1:data$Nt2),4),sero=sort(rep(seq(1,4),data$Nt)),med=NA,ciL=NA,ciU=NA)
 for(i in 1:data$Nt){
@@ -186,10 +197,10 @@ for(i in 1:data$Nt){
 for(i in 1:data$Nt2) for(s in 1:4){
   lam[lam$t==i & lam$sero==s,4:6] <- quantile(chains$lam[,i,s], c(0.5,0.025,0.975))
 }
-BtPlot <- ggplot(BtS, aes(date,med))+ geom_point()+
+BtPlot <- ggplot(BtS, aes(date,med))+ geom_point(col='blue')+
   theme_minimal()+ ylim(0,NA) + theme(text=element_text(size=16))+
-  geom_linerange(aes(ymin=ciL,ymax=ciU), alpha=0.3)+
-  theme(legend.position='none')+ ylab('Bt')+ xlab('Time')
+  theme(legend.position='none')+ ylab('Bt')+ xlab('Time')+
+  geom_ribbon(aes(ymin=ciL,ymax=ciU),fill='dodgerblue',alpha=0.5)
 BtPlot
 RtPlot <- ggplot(Rt, aes(date,med,col=factor(sero)))+ geom_point()+
   facet_wrap(~sero)+ theme_minimal()+ ylim(0,NA)+ theme(text=element_text(size=16))+
