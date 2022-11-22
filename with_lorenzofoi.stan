@@ -126,7 +126,7 @@ for(t in 1:Nt2-1) foi ~ normal(lamtot[t], 0.02); // Lorenzo's FOI
 
 
 generated quantities {
-  
+ 
   real predCases[Nt,4];
   real predCasesTot[Nt];
   
