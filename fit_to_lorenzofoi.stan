@@ -118,7 +118,7 @@ model {
   log_phiNB ~ normal(0.5,0.5);
 
 // likelihood
-for(t in 2:Nt) log_B[t] ~ normal(log_B[t-1], 0.01);
+for(t in 2:Nt) log_B[t] ~ normal(log_B[t-1], 0.05);
 NcasesTot ~ neg_binomial_2(Ctot, exp(log_phiNB)); // neg-binomial total cases
 for(s in 1:4) Ncases[,s] ~ neg_binomial_2(rC[,s], exp(log_phiNB));
 for(t in 1:Nt2-1) foi ~ normal(lamtot[t], 0.02); // Lorenzo's FOI
