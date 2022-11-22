@@ -21,8 +21,7 @@ data {
   int indL[Nt]; // indices for time step
   int indU[Nt];
   int ind[Nt2];
-  real St; //expected susceptible proportion at the time samples were collected
-  
+  real foi; // Lorenzo's FOI
 }
 
 
@@ -33,7 +32,6 @@ parameters {
   real log_B[Nt]; // transmission rate
   real <lower=0> log_phiNB; //variance of NB distribution
   real <lower=0> delta; // relative reporting rate for primary infection
-  real <lower=0> b; //variance for the normal likelihood
 }
 
 
@@ -56,17 +54,17 @@ transformed parameters {
   matrix[Nt2,4] Mz; // Mosquito
   simplex[4] pSero[Nt];
   real Rt[Nt,4];
-  vector[Nt2] S;
+  real lamtot[Nt2];
   
   {
-    
+    vector[Nt2] S;
     matrix[Nt2,4] E1;
     matrix[Nt2,4] I1;
     matrix[Nt2,4] E2;
     matrix[Nt2,4] I2;
     matrix[Nt2,4] Mo;
     vector[Nt2] R;
-    real lamtot[Nt2];
+
     
     
     // initial conditions
@@ -96,6 +94,7 @@ transformed parameters {
       for(s in 1:4) E2[t+1,s] = E2[t,s] + (sum(Mo[t,]) - Mo[t,s])*lam[t,s] - omega*E2[t,s] - er[t]*E2[t,s];
       for(s in 1:4) I2[t+1,s] = I2[t,s] + omega*E2[t,s] - sigma*I2[t,s] - er[t]*I2[t,s];
       R[t+1] = R[t] + sigma*sum(I2[t,]) - er[t]*R[t];
+      
     }
     
     for(s in 1:4) for(t in 1:Nt) C[t,s] = rho*omega*(sum(E2[indL[t]:indU[t],s]) + delta*sum(E1[indL[t]:indU[t],s]))*pop[t] +0.001;
@@ -105,7 +104,6 @@ transformed parameters {
     for(t in 1:Nt) for(s in 1:4) Rt[t,s] = (S[t]+sum(Mo[t,])-Mo[t,s])*B[t]/sigma;
     
   }
-  
 }
 
 
@@ -118,14 +116,12 @@ model {
   log_rho ~ normal(-2,0.5);
   delta ~ normal(0.3,0.1);
   log_phiNB ~ normal(0.5,0.5);
-  b ~ normal(0.5,0.1);
-  
-  // likelihood
-  for(t in 2:Nt) log_B[t] ~ normal(log_B[t-1], 0.05);
-  NcasesTot ~ neg_binomial_2(Ctot, exp(log_phiNB)); // neg-binomial total cases
-  for(s in 1:4) Ncases[,s] ~ neg_binomial_2(rC[,s], exp(log_phiNB));
-  for(t in 6196:6226) St ~ normal(S[t], b);
-  
+
+// likelihood
+for(t in 2:Nt) log_B[t] ~ normal(log_B[t-1], 0.01);
+NcasesTot ~ neg_binomial_2(Ctot, exp(log_phiNB)); // neg-binomial total cases
+for(s in 1:4) Ncases[,s] ~ neg_binomial_2(rC[,s], exp(log_phiNB));
+for(t in 1:Nt2-1) foi ~ normal(lamtot[t], 0.02); // Lorenzo's FOI
 }
 
 
