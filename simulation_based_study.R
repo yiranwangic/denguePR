@@ -25,7 +25,7 @@ doy_temperature_average<-as.data.frame(doy_temperature_average)
 temp <- rep(doy_temperature_average$TAVG,1000)
 
 # temperature-dependent bt
-a <- 0.000202*0.000491*4 # time-varying transmission rate
+a <- 0.000202*0.000491*4
 Tmin <- 13.35
 Tmax <- 37.46
 B <- a*(temp^2)*((temp-Tmin)^2)*(Tmax-temp) 
