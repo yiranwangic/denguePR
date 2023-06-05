@@ -11,14 +11,15 @@ library(ggplot2)
 library(DirichletReg)
 library(posterior)
 
-# calculate the average temperature for the day t of one year
+# calculate the average temperature for the day t of one year 
+# based on the daily temperature data in San Juan from 1990-2013
 df <- read.csv('San_Juan_Temperature_Data.csv')
 df$date <- seq(as.Date("1956-1-1"),by="day",length.out=nrow(df))
 df <- df[df$date > "1990-4-29", ]
 df <- df[df$date < "2013-4-30", ]
 df$date_1 <- format(df$date, format="%m-%d")
 doy_temperature_average <- ddply(df, ~date_1, colwise(mean, ~TAVG))
-# remove the 29th Feb in leap year
+# remove the 29th Feb in the leap year
 doy_temperature_average <- doy_temperature_average[-60,] 
 # simulate 1000-year temperature data
 doy_temperature_average<-as.data.frame(doy_temperature_average)
