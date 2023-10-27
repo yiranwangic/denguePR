@@ -97,7 +97,7 @@ for(t in 1:(nT-1)){
 tot <- su + rowSums(i1)+ rowSums(i2)+ rowSums(e1)+ rowSums(e2)+ rowSums(moP)+rowSums(moS)+ r
 plot(tot, type='l') 
 
-# plot simulated case data
+# plot simulated case data (choosing a starting point that with cases for all four serotypes)
 col_set <- c("#F8766D","#7CAE00","#00BFC4","#C77CFF")
 matplot(cases[t=(361816:368650),],type='l',xlab='Time (Years)',ylab='Serotype-specific cases',lty=1,col=col_set,xaxt='n',main='')
 axis(1,at=((0:20)*5*365),labels=((0:20)*5),cex.axis=0.8)
