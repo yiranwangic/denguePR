@@ -101,7 +101,7 @@ plot(tot, type='l')
 col_set <- c("#F8766D","#7CAE00","#00BFC4","#C77CFF")
 matplot(cases[t=(361816:368650),],type='l',xlab='Time (Years)',ylab='Serotype-specific cases',lty=1,col=col_set,xaxt='n',main='')
 axis(1,at=((0:20)*5*365),labels=((0:20)*5),cex.axis=0.8)
-matplot(casetot[t=(361350:368650)], type='l', xlab='Time (Years)', ylab='Total cases',xaxt='n')
+matplot(casetot[t=(361816:368650)], type='l', xlab='Time (Years)', ylab='Total cases',xaxt='n')
 axis(1,at=((0:20)*5*365),labels=((0:20)*5),cex.axis=0.8)
 
 
