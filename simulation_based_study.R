@@ -214,7 +214,7 @@ data$sigma <- sigma
 data$omega <- omega
 data$kappa <- kappa
 data$temp <- temp[-(1:14)]
-data$pSERO <- pSERO
+data$pSERO <- data$Ncases[1,]/data$NcasesTot[1]
 data$rho <- rho
 data$delta <- delta
 data$phi <- phi
